@@ -76,10 +76,12 @@ export default client;
 ## Utilizing the Macrometa Client in Serverless Functions
 
 With the Macrometa client instance set up, we can now leverage it in our serverless functions to interact with the database. The serverless function code is located in the `pages/api` directory.
-For this example, we will demonstrate a simple use case where we manage a collection of products and display them in our application. The code for this serverless function can be found in `pages/api/products.js`.
+For this example, we will demonstrate a simple use case where we manage a collection of products and display them in our application. The code for this serverless function can be found in `pages/api/products.js` and `pages/api/products/[product].js`.
 Here’s how to use the Macrometa client in your serverless functions:
 
 ```javascript
+// File: pages/api/products.js
+
 import client from "../../utils/c8client";
 import { toProduct } from "../../utils/transform";
 
@@ -106,3 +108,61 @@ async function getProducts(req, res) {
     res.status(200).json(docs.map(toProduct));
 }
 ```
+
+```javascript
+// File: pages/api/products/[product].js
+
+import client from "../../../utils/c8client";
+import { toProduct } from "../../../utils/transform";
+
+const PRODUCT_COLLECTION = process.env.PRODUCT_COLLECTION;
+
+export default async function handler(req, res) {
+    switch (req.method) {
+        case 'PUT':
+            await updateProduct(req, res);
+            break;
+        case 'DELETE':
+            await deleteProduct(req, res);
+            break;
+        default:
+            await getProduct(req, res);
+            break;
+    }
+}
+
+async function getProduct(req, res) {
+    const { product } = req.query;
+    try {
+        const doc = await client.getDocument(PRODUCT_COLLECTION, product);
+        res.status(200).json(toProduct(doc));
+    } catch(err) {
+        if (err.code == 404) {
+            res.status(404).json({ "message": `Could not find produce ${product}`});
+        } else {
+            res.status(500).json({"message": `Could not retrive product: ${err}`});
+        }
+    }
+}
+
+async function updateProduct(req, res) {
+    const { product } = req.query;
+    delete req.body.id;
+
+    try {
+        const doc = await client.updateDocument(PRODUCT_COLLECTION, product, req.body);
+        res.status(200).json(toProduct(doc));
+    } catch(err) {
+        if (err.code == 404) {
+            res.status(404).json({ "message": `Could not find produce ${product}`});
+        } else {
+            res.status(500).json({"message": `Could not retrive product: ${err}`});
+        }
+    }
+}
+
+async function deleteProduct(req, res) {
+    const { product } = req.query;
+    const deletedDoc = await client.deleteDocument(PRODUCT_COLLECTION, product);
+    res.status(200).json(toProduct(deletedDoc));
+}
