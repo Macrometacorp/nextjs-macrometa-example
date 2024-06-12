@@ -35,6 +35,16 @@ npm install
 npm run dev
 ```
 
+Add your Macrometa credentials to a `.env.local` file in the root directory of the project:
+
+```bash
+GDN_URL=<GDN_URL>
+GDN_USERNAME=<GDN_USERNAME>
+GDN_PASSWORD=<GDN_PASSWORD>
+GDN_FABRIC=<GDN_FABRIC>
+PRODUCT_COLLECTION=<PRODUCT_COLLECTION>
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Enabling Macrometa integration
