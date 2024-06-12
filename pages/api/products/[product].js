@@ -33,7 +33,7 @@ async function getProduct(req, res) {
 
 async function updateProduct(req, res) {
     const { product } = req.query;
-    req.body.id = null;
+    delete req.body.id;
 
     try {
         const doc = await client.updateDocument(PRODUCT_COLLECTION, product, req.body);
