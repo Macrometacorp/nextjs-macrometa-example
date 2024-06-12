@@ -130,5 +130,6 @@ async function deleteProduct(req, res) {
     const deletedDoc = await client.deleteDocument(PRODUCT_COLLECTION, product);
     res.status(200).json(toProduct(deletedDoc));
 }
+```
 
 This function code demonstrates how to perform CRUD operations on our products from the GDN collection. A [GDN collection](https://www.macrometa.com/docs/collections/) stores different kinds
