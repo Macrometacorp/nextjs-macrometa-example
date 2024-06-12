@@ -3,6 +3,10 @@
 ## Building a Simple Web Application with Next.js and Macrometa's Global Data Network
 In this guide, we will demonstrate how to create a simple web application using Next.js, leveraging the power of Macrometa's global data network.
 
+## Video Link
+
+https://drive.google.com/file/d/1bQWsd80oAohCzwkkrL0oxjCL7QBxNk73/view?usp=sharing
+
 ### What is Macrometa?
 Macrometa is a global data network that integrates a multi-model database, streams, and compute into a single, cohesive platform. It allows developers to build high-performance, globally distributed applications with ease.
 
