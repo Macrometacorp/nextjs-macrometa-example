@@ -15,7 +15,7 @@ This example illustrates how to use Macrometa as a backend for your Next.js appl
 - Serverless applications interact with the Macrometa GDN and handle business logic functions like updating inventory and customer data.
 
 ## Steps:
-At a high level, this guides follows three steps:
+At a high level, this guide follows three steps:
 1. Setting up a Next.js app
 2. Connecting your Next.js application to the Macrometa distributed multi-modal database to store and retrieve data.
 3. Implementing serverless functions in Next.js to interact with Macrometa's backend and perform business logic like updating records.
@@ -42,18 +42,12 @@ npm run dev
 2. Add your Macrometa credentials to a `.env.local` file in the root directory of the project.  
 
 ```bash
-GDN_URL=<GDN_URL>
-GDN_USERNAME=<GDN_USERNAME>
-GDN_PASSWORD=<GDN_PASSWORD>
-GDN_FABRIC=<GDN_FABRIC>
-PRODUCT_COLLECTION=<PRODUCT_COLLECTION>
+GDN_URL=<GDN_URL>   //your Macrometa GDN URL
+GDN_USERNAME=<GDN_USERNAME> // your Macrometa username
+GDN_PASSWORD=<GDN_PASSWORD>  // password
+GDN_FABRIC=<GDN_FABRIC>  // GDN fabric. 
+PRODUCT_COLLECTION=<PRODUCT_COLLECTION>  //name of product collection
 ```
-
-:::note
-
-You need to sign up to get access to GDN credentials.
-
-:::
 
 3. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -61,7 +55,8 @@ You need to sign up to get access to GDN credentials.
 ```bash
 npm install jsc8
 ```
-5. Create a Macrometa client instance:
+5. Create a Macrometa client instance
+
 ```javascript
 const jsc8 = require('jsc8');
 const client = new jsc8(process.env.GDN_URL);
