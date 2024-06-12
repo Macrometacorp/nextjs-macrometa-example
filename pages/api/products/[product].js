@@ -1,6 +1,8 @@
 import client from "../../../utils/c8client";
 import { toProduct } from "../../../utils/transform";
 
+const PRODUCT_COLLECTION = process.env.PRODUCT_COLLECTION;
+
 export default async function handler(req, res) {
     switch (req.method) {
         case 'PUT':
@@ -18,7 +20,7 @@ export default async function handler(req, res) {
 async function getProduct(req, res) {
     const { product } = req.query;
     try {
-        const doc = await client.getDocument("products", product);
+        const doc = await client.getDocument(PRODUCT_COLLECTION, product);
         res.status(200).json(toProduct(doc));
     } catch(err) {
         if (err.code == 404) {
@@ -34,7 +36,7 @@ async function updateProduct(req, res) {
     req.body.id = null;
 
     try {
-        const doc = await client.updateDocument("products", product, req.body);
+        const doc = await client.updateDocument(PRODUCT_COLLECTION, product, req.body);
         res.status(200).json(toProduct(doc));
     } catch(err) {
         if (err.code == 404) {
@@ -47,6 +49,6 @@ async function updateProduct(req, res) {
 
 async function deleteProduct(req, res) {
     const { product } = req.query;
-    const deletedDoc = await client.deleteDocument("products", product);
+    const deletedDoc = await client.deleteDocument(PRODUCT_COLLECTION, product);
     res.status(200).json(toProduct(deletedDoc));
 }
