@@ -1,3 +1,4 @@
+
 # Building a Simple Web Application with Next.js and Macrometa's Global Data Network
 This guide demonstrates how to create a simple web application using Next.js, leveraging the power of Macrometa's distributed global data network as the backend for storing and interacting with your application data.
 
@@ -38,7 +39,7 @@ npm install
 ```bash
 npm run dev
 ```
-2. Add your Macrometa credentials to a `.env.local` file in the root directory of the project:
+2. Add your Macrometa credentials to a `.env.local` file in the root directory of the project.  
 
 ```bash
 GDN_URL=<GDN_URL>
@@ -47,6 +48,12 @@ GDN_PASSWORD=<GDN_PASSWORD>
 GDN_FABRIC=<GDN_FABRIC>
 PRODUCT_COLLECTION=<PRODUCT_COLLECTION>
 ```
+
+:::note
+
+You need to sign up to get access to GDN credentials.
+
+:::
 
 3. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -69,33 +76,64 @@ export default client;
 With the Macrometa client instance set up, we can now leverage it in our serverless functions to interact with the database. The serverless function code is located in the `pages/api` directory.
 For this example, we will demonstrate a simple use case where we manage a collection of products and display them in our application. The code for this serverless function can be found in `pages/api/products.js`.
 
-Here’s how to use the Macrometa client in your serverless functions:
+Here’s how to use the Macrometa client in your serverless functions
 
 ```javascript
-import client from "../../utils/c8client";
-import { toProduct } from "../../utils/transform";
+// File: pages/api/products/[product].js
+
+import client from "../../../utils/c8client";
+import { toProduct } from "../../../utils/transform";
 
 const PRODUCT_COLLECTION = process.env.PRODUCT_COLLECTION;
 
 export default async function handler(req, res) {
     switch (req.method) {
-        case 'POST':
-            await createProduct(req, res);
+        case 'PUT':
+            await updateProduct(req, res);
+            break;
+        case 'DELETE':
+            await deleteProduct(req, res);
             break;
         default:
-            await getProducts(req, res);
+            await getProduct(req, res);
             break;
     }
 }
 
-async function createProduct(req, res) {
-    const newDoc = await client.insertDocument(PRODUCT_COLLECTION, req.body);
-    res.status(201).json(toProduct(newDoc));
+async function getProduct(req, res) {
+    const { product } = req.query;
+    try {
+        const doc = await client.getDocument(PRODUCT_COLLECTION, product);
+        res.status(200).json(toProduct(doc));
+    } catch(err) {
+        if (err.code == 404) {
+            res.status(404).json({ "message": `Could not find produce ${product}`});
+        } else {
+            res.status(500).json({"message": `Could not retrive product: ${err}`});
+        }
+    }
 }
 
-async function getProducts(req, res) {
-    const docs = await client.getDocumentMany(PRODUCT_COLLECTION);
-    res.status(200).json(docs.map(toProduct));
+async function updateProduct(req, res) {
+    const { product } = req.query;
+    delete req.body.id;
+
+    try {
+        const doc = await client.updateDocument(PRODUCT_COLLECTION, product, req.body);
+        res.status(200).json(toProduct(doc));
+    } catch(err) {
+        if (err.code == 404) {
+            res.status(404).json({ "message": `Could not find produce ${product}`});
+        } else {
+            res.status(500).json({"message": `Could not retrive product: ${err}`});
+        }
+    }
 }
-```
-This function code helps to create and retrieve our products from the GDN collection. A GDN collection stores different kinds of data. 
+
+async function deleteProduct(req, res) {
+    const { product } = req.query;
+    const deletedDoc = await client.deleteDocument(PRODUCT_COLLECTION, product);
+    res.status(200).json(toProduct(deletedDoc));
+}
+
+This function code demonstrates how to perform CRUD operations on our products from the GDN collection. A [GDN collection](https://www.macrometa.com/docs/collections/) stores different kinds
