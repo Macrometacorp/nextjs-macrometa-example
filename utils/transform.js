@@ -1,5 +1,7 @@
 export function toProduct(doc) {
     return {
-        name: doc._key,
-    }
+        id: doc._key,
+        name: doc.name,
+        quantity: doc.quantity,
+    };
 }
